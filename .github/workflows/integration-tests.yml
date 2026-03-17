@@ -1,0 +1,32 @@
+name: Run integration tests
+on:
+  workflow_dispatch:
+    inputs:
+      lane:
+        description: "Target environment"
+        required: true
+        type: string
+        default: 'development'
+
+permissions:
+  contents: read
+
+env:
+  TICKETS_DATABASE_URL: "postgresql+psycopg://train:train@db:5432/train"
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.x"
+      - name: Install the dependencies
+        working-directory: chapter_4
+        run: |
+          pip install ".[dev]"
+      - name: Run tests
+        working-directory: chapter_4
+        run: |
+          pytest .
